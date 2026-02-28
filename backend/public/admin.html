@@ -1,0 +1,1010 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ES Monitor-AdminPanel</title>
+
+<style>
+:root {
+    --bg: #0f1115;
+    --card: #1a1d23;
+    --border: #262b33;
+    --text: #e6e6e6;
+    --muted: #9aa4b2;
+    --accent: #3b82f6;
+    --danger: #ef4444;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+}
+
+
+.sidebar {
+    width: 260px;
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.sidebar-header {
+    padding: 0 20px 20px 20px;
+    font-weight: 600;
+    font-size: 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.menu {
+    margin-top: 20px;
+    flex: 1;
+}
+
+.menu-item {
+    padding: 14px 20px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: 0.2s;
+}
+
+.menu-item:hover {
+    background: #20242c;
+    color: var(--text);
+}
+
+.menu-item.active {
+    background: #20242c;
+    color: var(--accent);
+    border-left: 3px solid var(--accent);
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.main {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 25px;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.section-title {
+    font-size: 24px;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.service-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.service-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.service-active {
+    background: #065f46;
+    color: #34d399;
+}
+
+.service-inactive {
+    background: #7f1d1d;
+    color: #f87171;
+}
+
+.service-failed {
+    background: #7c2d12;
+    color: #fb923c;
+}
+
+.service-unknown {
+    background: #374151;
+    color: #9ca3af;
+}
+
+.card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 22px;
+    border: 1px solid var(--border);
+}
+
+.card-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 22px;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.card-title::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--accent);
+    margin-top: 6px;
+    border-radius: 2px;
+}
+
+.net-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #12151b;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.net-input:disabled {
+    opacity: 0.4;
+}
+
+.apply-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.apply-btn:hover {
+    opacity: 0.85;
+}
+
+.kv {
+    margin-bottom: 18px;
+}
+
+.kv-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 5px;
+}
+
+.kv-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    text-align: left;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding-bottom: 12px;
+}
+
+.admin-table td {
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+}
+
+.admin-table select {
+    background: #12151b;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+.admin-table button {
+    padding: 6px 12px;
+    margin-right: 6px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.admin-table button:first-child {
+    background: var(--accent);
+    color: white;
+}
+
+.admin-table button:last-child {
+    background: var(--danger);
+    color: white;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.form-row .net-input {
+    flex: 1;
+}
+
+.danger-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: var(--danger);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.danger-btn:hover {
+    opacity: 0.85;
+}
+
+.log-box {
+    background: #0b0d11;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 15px;
+    max-height: 450px;
+    overflow-y: auto;
+    font-size: 12px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 220px;
+    }
+}
+
+@media (max-width: 700px) {
+    body {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+    .menu {
+        display: flex;
+    }
+    .menu-item {
+        white-space: nowrap;
+    }
+}
+</style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="sidebar-header">
+        Admin Panel
+    </div>
+    <div class="menu">
+        <div class="menu-item active" data-section="system">System Information</div>
+        <div class="menu-item" data-section="settings">Settings</div>
+        <div class="menu-item" data-section="network">Network</div>
+        <div class="menu-item" data-section="security">Security</div>
+        <div class="menu-item" data-section="maintenance">Maintenance</div>
+        <div class="menu-item" data-section="logs">Logs</div>
+    </div>
+    <div class="sidebar-footer">
+        ES Monitor 1.0
+    </div>
+</div>
+<div class="main">
+    <div class="section active" id="section-system">
+        <div class="section-title">System Information</div>
+        <div id="systemContent">
+            <div class="card">
+                <div class="card-title">Loading...</div>
+            </div>
+        </div>
+    </div>
+    <div class="section" id="section-settings">
+        <div class="section-title">Settings</div>
+        <div class="card">
+            <div class="card-title">Presentation Settings</div>
+            <div class="kv">
+                <div class="kv-label">Slide Duration</div>
+                    <input type="range"
+                        id="slideDurationInput"
+                        class="net-input"
+                        min="5000"
+                        max="300000"
+                        step="1000">
+                <div id="slideDurationInfo"style="margin-top:8px; font-size:14px; color: var(--muted);"></div>
+            </div>
+            <div class="kv">
+                <div class="kv-label">Max Presentations Stored</div>
+                <input type="number"
+                    id="maxPresentationsInput"
+                    class="net-input"
+                    min="1"
+                    max="100">
+            </div>
+            <div style="margin-top:25px;">
+                <button onclick="saveSettings()" class="apply-btn">
+                    Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="section" id="section-network">
+        <div class="section-title">Network Configuration</div>
+        <div id="networkContent">
+            <div class="card">
+                <div class="card-title">IPv4 Configuration</div>
+                <div class="kv">
+                    <div class="kv-label">Mode</div>
+                    <div class="kv-value">
+                        <label>
+                            <input type="radio" name="netmode" value="auto" checked>
+                            DHCP
+                        </label>
+                        &nbsp;&nbsp;
+                        <label>
+                            <input type="radio" name="netmode" value="manual">
+                            Static
+                        </label>
+                    </div>
+                </div>
+                <div class="kv">
+                    <div class="kv-label">IP Address</div>
+                    <input type="text" id="ipInput" class="net-input">
+                </div>
+                <div class="kv">
+                    <div class="kv-label">Subnet Mask</div>
+                    <input type="text" id="maskInput" class="net-input">
+                </div>
+                <div class="kv">
+                    <div class="kv-label">Gateway</div>
+                    <input type="text" id="gatewayInput" class="net-input">
+                </div>
+                <div class="kv">
+                    <div class="kv-label">DNS</div>
+                    <input type="text" id="dnsInput" class="net-input">
+                </div>
+                <div style="margin-top:25px;">
+                    <button onclick="applyNetwork()" class="apply-btn">
+                        Apply Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section" id="section-security">
+        <div class="section-title">Security</div>
+        <div class="card">
+            <div class="card-title">User Management</div>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th style="width:240px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+        </table>
+    </div>
+    <div class="card" style="margin-top:25px;">
+        <div class="card-title">Add New User</div>
+
+        <div class="form-row">
+            <input type="text" id="newUsername" class="net-input" placeholder="Username">
+            <input type="password" id="newPassword" class="net-input" placeholder="Password">
+
+            <select id="newRole" class="net-input">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <button onclick="addUser()" class="apply-btn">Add User</button>
+        </div>
+    </div>
+</div>
+    <div class="section" id="section-maintenance">
+    <div class="section-title">Maintenance</div>
+    <div class="cards-grid">
+        <div class="card">
+            <div class="card-title">Service Control</div>
+
+            <div class="kv">
+                <button class="apply-btn" onclick="restartPlayer()">
+                    Restart Kiosk / Player
+                </button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">System Control</div>
+
+            <div class="kv">
+                <button class="apply-btn" onclick="rebootSystem()">
+                    Restart System
+                </button>
+            </div>
+
+            <div class="kv">
+                <button class="danger-btn" onclick="shutdownSystem()">
+                    Shutdown System
+                </button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Storage & Cleanup</div>
+
+            <div class="kv">
+                <button class="apply-btn" onclick="clearLogs()">
+                    Clear Logs
+                </button>
+            </div>
+
+            <div class="kv">
+                <button class="apply-btn" onclick="resetActivePresentation()">
+                    Reset Active Presentation
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+    <div class="section" id="section-logs">
+    <div class="section-title">Logs</div>
+    <div class="card">
+        <div class="kv">
+            <div class="kv-label">Select Log Source</div>
+
+            <select id="logSelector" class="net-input">
+                <option value="backend">Backend (file)</option>
+                <option value="backend-service">Backend (service)</option>
+                <option value="kiosk-service">Kiosk Service</option>
+            </select>
+        </div>
+        <div class="kv" style="margin-top:15px;">
+            <button class="apply-btn" onclick="loadLogs()">Refresh Logs</button>
+        </div>
+        <div style="margin-top:20px;">
+            <pre id="logOutput" class="log-box">Select log source and click Refresh</pre>
+        </div>
+    </div>
+</div>
+</div>
+<script>
+
+/* ================= MENU ================= */
+
+document.querySelectorAll(".menu-item").forEach(item => {
+    item.addEventListener("click", () => {
+
+        const section = item.dataset.section;
+
+        document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+        document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+
+        item.classList.add("active");
+        document.getElementById("section-" + section).classList.add("active");
+
+        if (section === "system") {
+            loadSystemInfo();
+        }
+
+        if (section === "network") {
+            loadNetworkInfo();
+        }
+
+        if (section === "security") {
+            loadUsers();
+        }
+        if (section === "maintenance") {
+            loadMaintenance();
+        }
+        if (section === "logs") {
+            loadLogs();
+        }
+        if (section === "settings") {
+            loadSettingsAdmin();
+        }
+    });
+});
+
+/* ================= SYSTEM INFO ================= */
+
+async function loadSystemInfo() {
+
+    try {
+
+        const r = await fetch("/api/admin/system");
+        if (!r.ok) return;
+
+        const data = await r.json();
+
+        const r2 = await fetch("/api/admin/system/services");
+        let services = [];
+
+        if (r2.ok) {
+            services = await r2.json();
+        }
+
+        const uptimeHours = Math.floor(data.uptime_seconds / 3600);
+        const uptimeMinutes = Math.floor((data.uptime_seconds % 3600) / 60);
+
+        let servicesHTML = "";
+
+        services.forEach(s => {
+
+            let badgeClass = "service-unknown";
+
+            if (s.status === "active") badgeClass = "service-active";
+            if (s.status === "inactive") badgeClass = "service-inactive";
+            if (s.status === "failed") badgeClass = "service-failed";
+
+            servicesHTML += `
+                <div class="service-row">
+                    <div>${s.name}</div>
+                    <div class="service-badge ${badgeClass}">
+                        ${s.status.toUpperCase()}
+                    </div>
+                </div>
+            `;
+        });
+
+        document.getElementById("systemContent").innerHTML = `
+
+        <div class="cards-grid">
+
+            <div class="card">
+                <div class="card-title">Device</div>
+
+                <div class="kv">
+                    <div class="kv-label">Hostname</div>
+                    <div class="kv-value">${data.hostname}</div>
+                </div>
+
+                <div class="kv">
+                    <div class="kv-label">OS Version</div>
+                    <div class="kv-value">${data.os_version}</div>
+                </div>
+
+                <div class="kv">
+                    <div class="kv-label">Uptime</div>
+                    <div class="kv-value">${uptimeHours}h ${uptimeMinutes}m</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Network</div>
+
+                <div class="kv">
+                    <div class="kv-label">IP Address</div>
+                    <div class="kv-value">${data.ip}</div>
+                </div>
+
+                <div class="kv">
+                    <div class="kv-label">MAC Address</div>
+                    <div class="kv-value">${data.mac}</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Performance</div>
+
+                <div class="kv">
+                    <div class="kv-label">CPU Load</div>
+                    <div class="kv-value">${data.cpu_load}%</div>
+                </div>
+
+                <div class="kv">
+                    <div class="kv-label">RAM Usage</div>
+                    <div class="kv-value">${data.ram_used_mb} MB / ${data.ram_total_mb} MB</div>
+                </div>
+
+                <div class="kv">
+                    <div class="kv-label">Temperature</div>
+                    <div class="kv-value">${data.temperature}</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Services Status</div>
+                ${servicesHTML}
+            </div>
+
+        </div>
+        `;
+
+    } catch (e) {
+        console.log("System API error", e);
+    }
+}
+
+/* ================= SETTINGS ================= */
+
+function updateSlideDurationInfo() {
+
+    const input = document.getElementById("slideDurationInput");
+    const info = document.getElementById("slideDurationInfo");
+
+    if (!input || !info) return;
+
+    const ms = parseInt(input.value);
+    const seconds = Math.floor(ms / 1000);
+
+    let display = "";
+
+    if (seconds < 60) {
+        display = seconds + " seconds";
+    } else {
+        const minutes = Math.floor(seconds / 60);
+        const remaining = seconds % 60;
+
+        if (remaining === 0) {
+            display = minutes + " minute(s)";
+        } else {
+            display = minutes + "m " + remaining + "s";
+        }
+    }
+
+    info.textContent = display;
+}
+
+async function loadSettingsAdmin() {
+
+    const r = await fetch("/api/admin/settings");
+    if (!r.ok) return;
+
+    const data = await r.json();
+
+    console.log("Settings loaded:", data);
+
+    const slideInput = document.getElementById("slideDurationInput");
+    const maxInput = document.getElementById("maxPresentationsInput");
+
+    if (slideInput) {
+        slideInput.value = data.slide_duration_ms;
+    }
+
+    if (maxInput) {
+        maxInput.value = data.max_presentations;
+    }
+
+    updateSlideDurationInfo();
+}
+
+async function saveSettings() {
+
+    const slideDuration =
+        parseInt(document.getElementById("slideDurationInput").value);
+
+    const maxPresentations =
+        parseInt(document.getElementById("maxPresentationsInput").value);
+
+    const r = await fetch("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            slide_duration_ms: slideDuration,
+            max_presentations: maxPresentations
+        })
+    });
+
+    const result = await r.json();
+
+    if (r.ok) {
+        alert("Settings saved successfully");
+    } else {
+        alert("Error: " + JSON.stringify(result));
+    }
+}
+
+/* ================= NETWORK INFO ================= */
+
+async function loadNetworkInfo() {
+    try {
+        const r = await fetch("/api/admin/network");
+        if (!r.ok) return;
+
+        const data = await r.json();
+
+        document.querySelectorAll("input[name='netmode']").forEach(radio => {
+            radio.checked = (radio.value === data.method);
+        });
+
+        document.getElementById("ipInput").value = data.ip || "";
+        document.getElementById("maskInput").value = data.mask || "";
+        document.getElementById("gatewayInput").value = data.gateway || "";
+        document.getElementById("dnsInput").value = data.dns || "";
+
+        toggleInputs();
+
+    } catch (e) {
+        console.log("Network API error", e);
+    }
+}
+
+function toggleInputs() {
+    const mode = document.querySelector("input[name='netmode']:checked").value;
+    const disabled = (mode === "auto");
+
+    document.getElementById("ipInput").disabled = disabled;
+    document.getElementById("maskInput").disabled = disabled;
+    document.getElementById("gatewayInput").disabled = disabled;
+    document.getElementById("dnsInput").disabled = disabled;
+}
+
+document.querySelectorAll("input[name='netmode']").forEach(radio => {
+    radio.addEventListener("change", toggleInputs);
+});
+
+async function applyNetwork() {
+
+    const mode = document.querySelector("input[name='netmode']:checked").value;
+
+    const payload = {
+        method: mode,
+        ip: document.getElementById("ipInput").value,
+        mask: document.getElementById("maskInput").value,
+        gateway: document.getElementById("gatewayInput").value,
+        dns: document.getElementById("dnsInput").value
+    };
+
+    const r = await fetch("/api/admin/network", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    const result = await r.json();
+
+    if (r.ok) {
+        alert("Network updated successfully");
+        loadNetworkInfo();
+    } else {
+        alert("Error: " + JSON.stringify(result));
+    }
+}
+
+/* ================= SECURITY INFO ================= */
+async function loadUsers() {
+    const r = await fetch("/api/admin/users");
+    if (!r.ok) return;
+
+    const users = await r.json();
+
+    const tbody = document.getElementById("usersTableBody");
+    tbody.innerHTML = "";
+
+    users.forEach(user => {
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${user.username}</td>
+            <td>
+                <select onchange="changeRole('${user.username}', this.value)">
+                    <option value="user" ${user.role === "user" ? "selected" : ""}>User</option>
+                    <option value="admin" ${user.role === "admin" ? "selected" : ""}>Admin</option>
+                </select>
+            </td>
+            <td>
+                <button onclick="changePassword('${user.username}')">Change Password</button>
+                <button onclick="deleteUser('${user.username}')">Delete</button>
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+}
+
+async function addUser() {
+
+    const username = document.getElementById("newUsername").value;
+    const password = document.getElementById("newPassword").value;
+    const role = document.getElementById("newRole").value;
+
+    const r = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, role })
+    });
+
+    const result = await r.json();
+
+    if (r.ok) {
+        loadUsers();
+        document.getElementById("newUsername").value = "";
+        document.getElementById("newPassword").value = "";
+    } else {
+        alert("Error: " + JSON.stringify(result));
+    }
+}
+
+async function changeRole(username, role) {
+
+    const r = await fetch("/api/admin/users/" + username, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role })
+    });
+
+    const result = await r.json();
+
+    if (!r.ok) {
+        alert("Error: " + JSON.stringify(result));
+        loadUsers();
+    }
+}
+
+async function changePassword(username) {
+
+    const newPassword = prompt("Enter new password for " + username);
+    if (!newPassword) return;
+
+    const r = await fetch("/api/admin/users/" + username, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: newPassword })
+    });
+
+    const result = await r.json();
+
+    if (!r.ok) {
+        alert("Error: " + JSON.stringify(result));
+    }
+}
+
+async function deleteUser(username) {
+
+    if (!confirm("Delete user " + username + "?")) return;
+
+    const r = await fetch("/api/admin/users/" + username, {
+        method: "DELETE"
+    });
+
+    const result = await r.json();
+
+    if (r.ok) {
+        loadUsers();
+    } else {
+        alert("Error: " + JSON.stringify(result));
+    }
+}
+
+/* ================= MAINTENANCE ================= */
+
+async function restartPlayer() {
+    if (!confirm("Restart Kiosk / Player?")) return;
+
+    const r = await fetch("/api/admin/maintenance/restart-player", {
+        method: "POST"
+    });
+
+    if (r.ok) {
+        alert("Player restarted");
+    } else {
+        alert("Error restarting player");
+    }
+}
+
+async function rebootSystem() {
+    if (!confirm("Restart entire system?")) return;
+
+    await fetch("/api/admin/maintenance/reboot", {
+        method: "POST"
+    });
+
+    alert("System reboot initiated...");
+}
+
+async function shutdownSystem() {
+    if (!confirm("Shutdown system now?")) return;
+
+    await fetch("/api/admin/maintenance/shutdown", {
+        method: "POST"
+    });
+
+    alert("System shutdown initiated...");
+}
+
+async function clearLogs() {
+    const r = await fetch("/api/admin/maintenance/clear-logs", {
+        method: "POST"
+    });
+
+    if (r.ok) {
+        alert("Logs cleared");
+    } else {
+        alert("Error clearing logs");
+    }
+}
+
+async function resetActivePresentation() {
+
+    if (!confirm("Reset active presentation?")) return;
+
+    const r = await fetch("/api/admin/maintenance/reset-active", {
+        method: "POST"
+    });
+
+    const result = await r.json();
+
+    if (r.ok) {
+        alert("Active presentation reset");
+    } else {
+        alert("Error: " + JSON.stringify(result));
+    }
+}
+
+function loadMaintenance() {
+    console.log("Maintenance section loaded");
+}
+
+/* ================= LOGS ================= */
+
+async function loadLogs() {
+
+    const source = document.getElementById("logSelector").value;
+
+    const r = await fetch("/api/admin/logs/" + source);
+
+    if (!r.ok) {
+        document.getElementById("logOutput").textContent = "Error loading logs";
+        return;
+    }
+
+    const data = await r.json();
+
+    document.getElementById("logOutput").textContent = data.log || "No log data";
+}
+
+
+
+loadSystemInfo();
+loadNetworkInfo();
+loadNetworkInfo();
+loadMaintenance();
+loadLogs();
+setInterval(loadSystemInfo, 10000);
+
+document.getElementById("slideDurationInput")
+        ?.addEventListener("input", updateSlideDurationInfo);
+
+</script>
+
+</body>
+</html>

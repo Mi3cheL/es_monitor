@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ES Monitor – Login</title>
+
+<style>
+:root {
+    --bg: #0f1115;
+    --card: #1a1d23;
+    --border: #262b33;
+    --text: #e6e6e6;
+    --muted: #9aa4b2;
+    --accent: #3b82f6;
+    --danger: #ef4444;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg);
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--text);
+}
+
+.wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    width: 380px;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 35px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+
+.logo {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+label {
+    font-size: 13px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+}
+
+input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #222732;
+    color: var(--text);
+    font-size: 14px;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.error {
+    margin-top: 15px;
+    font-size: 13px;
+    color: var(--danger);
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+    <div class="card">
+        <div class="logo">
+            <img src="/static/logo.png" alt="Logo" style="height:50px;">
+        </div>
+
+        <form method="post" id="loginForm">
+            <div class="input-group">
+                <label>Login</label>
+                <input type="text" name="username" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <button type="submit">Log in</button>
+
+            <div class="error">
+                <script>
+                    if (window.location.search.includes("error=1")) {
+                        document.write("Incorrect login or password");
+                    }
+                </script>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+const params = new URLSearchParams(window.location.search);
+const next = params.get("next");
+
+if (next) {
+    document.getElementById("loginForm").action = "/login?next=" + next;
+} else {
+    document.getElementById("loginForm").action = "/login";
+}
+</script>
+</body>
+</html>

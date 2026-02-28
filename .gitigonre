@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtualenv
+venv/
+
+# Logs
+logs/
+*.log
+
+# Data runtime
+data/
+content/
+active
+
+# System files
+*.img
+*.iso
+*.gz

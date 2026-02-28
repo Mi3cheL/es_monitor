@@ -1,0 +1,15 @@
+[Unit]
+Description=es_monitor Kiosk (Chromium on X :0)
+After=graphical.target
+
+[Service]
+Type=simple
+User=es_admin
+WorkingDirectory=/opt/es_monitor
+Environment=DISPLAY=:0
+ExecStart=/opt/es_monitor/player/start_kiosk.sh
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=graphical.target

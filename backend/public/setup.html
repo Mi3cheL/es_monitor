@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>BA InfoPC – Initial Setup</title>
+
+<style>
+:root {
+    --bg: #0f1115;
+    --card: #1a1d23;
+    --border: #262b33;
+    --text: #e6e6e6;
+    --muted: #9aa4b2;
+    --accent: #3b82f6;
+    --danger: #ef4444;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg);
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--text);
+}
+
+.wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    width: 400px;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 35px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.logo img {
+    height: 50px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 25px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+label {
+    font-size: 13px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+}
+
+input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #222732;
+    color: var(--text);
+    font-size: 14px;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.error {
+    margin-top: 15px;
+    font-size: 13px;
+    color: var(--danger);
+    text-align: center;
+}
+
+.footer {
+    margin-top: 25px;
+    font-size: 12px;
+    text-align: center;
+    color: var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+    <div class="card">
+
+        <div class="logo">
+            <img src="/static/logo.png" alt="Logo">
+        </div>
+
+        <div class="subtitle">
+            Initial administrator configuration required
+        </div>
+
+        <form id="setupForm">
+
+            <div class="input-group">
+                <label>Administrator Login</label>
+                <input type="text" id="username" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <div class="input-group">
+                <label>Confirm Password</label>
+                <input type="password" id="confirm" required>
+            </div>
+
+            <button type="submit">Create Administrator</button>
+
+            <div class="error" id="errorBox"></div>
+
+        </form>
+
+        <div class="footer">
+            System must be initialized before first login.
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.getElementById("setupForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm").value;
+    const errorBox = document.getElementById("errorBox");
+
+    errorBox.textContent = "";
+
+    if (!username || !password) {
+        errorBox.textContent = "All fields are required.";
+        return;
+    }
+
+    if (password !== confirm) {
+        errorBox.textContent = "Passwords do not match.";
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/setup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            errorBox.textContent = data.error || "Setup failed.";
+            return;
+        }
+
+        window.location.href = "/login";
+
+    } catch (err) {
+        errorBox.textContent = "Connection error.";
+    }
+});
+</script>
+
+</body>
+</html>
