@@ -97,26 +97,13 @@ http://<DEVICE_IP>:8080
 
 # First Login
 
-Default configuration contains no users.
-
-You must manually create an admin user in:
+The administrator account configuration is stored in:
 
 ```
 /opt/es_monitor/data/config/security.json
 ```
 
-Example:
-
-```json
-{
-  "users": {
-    "admin": {
-      "password_hash": "<generated_hash>",
-      "role": "admin"
-    }
-  }
-}
-```
+File is automatically created during the initial setup process when accessing the web interface for the first time and creating the administrator account.
 
 Password hashes use PBKDF2 SHA256.
 
@@ -231,7 +218,20 @@ Virtual environment is created during installation.
 
 # License
 
-License will be defined before public release.
+ES Monitor is released under the GNU General Public License v3.0 (GPLv3).
+
+You are free to:
+
+- Use the software
+- Modify it
+- Distribute it
+
+Under the condition that:
+
+- Any distributed or commercial version must also be licensed under GPLv3
+- Source code must remain available
+
+See the LICENSE file for full terms.
 
 ---
 
