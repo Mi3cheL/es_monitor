@@ -107,6 +107,17 @@ File is automatically created during the initial setup process when accessing th
 
 Password hashes use PBKDF2 SHA256.
 
+Example:
+json
+{
+  "users": {
+    "admin": {
+      "password_hash": "<generated_hash>",
+      "role": "admin"
+    }
+  }
+}
+
 ---
 
 # Configuration
