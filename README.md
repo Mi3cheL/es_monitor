@@ -260,8 +260,8 @@ If it helps your organization, voluntary donations are welcome to support furthe
 Developed and maintained by Michał Wierzbicki.
 
 - Email: wierzbicki.michal03@gmail.com  
-- LinkedIn: https://www.linkedin.com/in/TWOJ-LINK  
-- GitHub: https://github.com/Mi3cheL
+- LinkedIn: https://www.linkedin.com/in/michał-wierzbicki-493a03307?utm_source
+- Github :https://github.com/Mi3cheL
 
 For collaboration, consulting, or commercial licensing inquiries, feel free to reach out.
 
